@@ -81,7 +81,6 @@ func (t *KeyLogger) Read() (chan InputEvent, error) {
 
 			n, err := fd.Read(tmp)
 			if err != nil {
-				ret <- InputEvent{}
 				close(ret)
 				break
 			}
@@ -90,7 +89,8 @@ func (t *KeyLogger) Read() (chan InputEvent, error) {
 			}
 
 			if err := binary.Read(bytes.NewBuffer(tmp), binary.LittleEndian, &event); err != nil {
-				ret <- InputEvent{}
+				close(ret)
+				break
 			}
 
 			ret <- event
